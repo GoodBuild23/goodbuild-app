@@ -1,1 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GoodBuild</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231818F8' d='M9.2 17.6 3 11.4l2.1-2.1 4.1 4.1L18.9 4l2.1 2.1z'/%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --cream:#F4F3EF;--surface:#fff;--surface-2:#FBFAF6;--surface-3:#F1F0EA;
+  --ink:#16161E;--ink-2:#565563;--ink-3:#8C8B98;
+  --blue:#1818F8;--blue-deep:#1410C8;--blue-soft:#ECEBFE;--blue-ink:#1714B0;
+  --navy:#0B0850;--line:#E7E6E1;--line-2:#EFEEE9;
+  --green:#0E9E6E;--green-soft:#E4F6EE;--amber:#B97A0A;--amber-soft:#F8EFD9;
+  --red:#C8453C;--red-soft:#F7E4E2;
+  --shadow:0 1px 2px rgba(11,8,40,.04),0 8px 24px -16px rgba(11,8,40,.18);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--cream);color:var(--ink);font-family:'Plus Jakarta Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono',monospace}
+button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#dcdbd4;border-radius:8px;border:3px solid var(--cream)}
+.shell{display:flex;min-height:100vh}
+.side{width:248px;flex-shrink:0;background:var(--navy);color:#CFCEF2;display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.brand img{height:24px;filter:brightness(0) invert(1)}
+.brand b{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.01em}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#A9A8DA;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer}
+.nav a.on{background:rgba(255,255,255,.08);color:#fff}
+.nav a.off{opacity:.45;cursor:default}
+.nav a svg{width:17px;height:17px}
+.nav .tag{margin-left:auto;font-size:9px;font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.1);padding:2px 6px;border-radius:20px;letter-spacing:.05em}
+.side .foot{margin-top:auto;border-top:1px solid rgba(255,255,255,.1);padding-top:14px}
+.side .agname{font-size:13px;font-weight:700;color:#fff;padding:0 8px 2px}
+.side .agsub{font-size:11px;color:#8786C4;padding:0 8px 12px;font-family:'JetBrains Mono',monospace}
+.side .out{width:100%;display:flex;align-items:center;gap:9px;background:transparent;border:1px solid rgba(255,255,255,.14);color:#CFCEF2;border-radius:9px;padding:9px 12px;font-size:13px;font-weight:600}
+.side .out:hover{background:rgba(255,255,255,.06)}
+.side .out svg{width:16px;height:16px;flex-shrink:0}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.bar{display:flex;align-items:flex-end;gap:14px;padding:30px 34px 0;flex-wrap:wrap}
+.bar .titles{flex:1;min-width:200px}
+.bar .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-ink);font-weight:600}
+.bar h1{font-size:25px;margin:6px 0 0;letter-spacing:-.02em}
+.bar .acts{display:flex;gap:9px}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:600;font-size:13px;border-radius:10px;padding:9px 14px;transition:.15s;box-shadow:var(--shadow)}
+.btn:hover{background:var(--surface-2)}
+.btn.pri{background:linear-gradient(180deg,#3A37FF,#1818F8);color:#fff;border:none}
+.btn.pri:hover{filter:brightness(1.06)}
+.btn:disabled{opacity:.5;pointer-events:none}
+.content{padding:24px 34px 80px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow)}
+.stat .l{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.stat .v{font-size:28px;font-weight:800;margin-top:7px;letter-spacing:-.02em}
+.stat .v small{font-size:14px;font-weight:600;color:var(--ink-3)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:13px 18px;border-bottom:1px solid var(--line);background:var(--surface-2);font-family:'JetBrains Mono',monospace}
+td{padding:14px 18px;border-bottom:1px solid var(--line-2);font-size:14px;vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{cursor:pointer;transition:.12s}
+tbody tr:hover{background:var(--surface-2)}
+.cand{display:flex;align-items:center;gap:12px}
+.av{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-weight:700;font-size:14px;flex-shrink:0}
+.cand .nm{font-weight:700;line-height:1.2}
+.cand .rf{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3)}
+.muted{color:var(--ink-3);font-size:13px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;border-radius:8px;padding:4px 10px}
+.chip .dot{width:6px;height:6px;border-radius:50%}
+.chip.g{background:var(--green-soft);color:var(--green)}.chip.g .dot{background:var(--green)}
+.chip.a{background:var(--amber-soft);color:var(--amber)}.chip.a .dot{background:var(--amber)}
+.chip.r{background:var(--red-soft);color:var(--red)}.chip.r .dot{background:var(--red)}
+.chip.n{background:var(--surface-3);color:var(--ink-3)}.chip.n .dot{background:var(--ink-3)}
+.netcell{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-2)}
+.netcell b{color:var(--ink)}
+.flagdot{display:inline-flex;align-items:center;gap:5px;background:var(--red-soft);color:var(--red);font-size:12px;font-weight:700;border-radius:20px;padding:3px 10px;font-family:'JetBrains Mono',monospace}
+.clean{color:var(--ink-3);font-size:13px}
+.empty{text-align:center;padding:64px 24px}
+.empty .ic{width:48px;height:48px;border-radius:14px;background:var(--blue-soft);display:grid;place-items:center;margin:0 auto 16px}
+.empty .ic svg{width:22px;height:22px;color:var(--blue)}
+.empty h3{margin:0 0 8px;font-size:19px}
+.empty p{color:var(--ink-2);max-width:460px;margin:0 auto 20px;font-size:14px;line-height:1.6}
+.scrim{position:fixed;inset:0;background:rgba(11,8,40,.5);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:44px 18px;z-index:40;overflow:auto}
+.modal{background:var(--surface);border-radius:20px;max-width:700px;width:100%;border:1px solid var(--line);box-shadow:0 50px 110px -40px rgba(11,8,40,.55);overflow:hidden}
+.mhead{display:flex;align-items:center;gap:14px;padding:22px 26px;border-bottom:1px solid var(--line)}
+.mhead .who{min-width:0}
+.mhead .nm{font-size:19px;font-weight:800;letter-spacing:-.01em}
+.mhead .sb{color:var(--ink-3);font-size:13px;margin-top:1px}
+.mhead .x{border:none;background:var(--surface-3);border-radius:9px;width:32px;height:32px;font-size:17px;color:var(--ink-2);flex-shrink:0}
+.mhead .x:hover{background:var(--line)}
+.mbody{padding:22px 26px}
+.alert{display:flex;gap:11px;align-items:flex-start;background:var(--red-soft);border:1px solid #EBC9C6;border-radius:13px;padding:13px 15px;margin-bottom:20px;font-size:13.5px;color:#8d2e27;line-height:1.5}
+.alert svg{flex-shrink:0;margin-top:1px}
+.scores{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:20px}
+.scorebox{border:1px solid var(--line);border-radius:14px;padding:15px 16px}
+.scorebox .lbl{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600}
+.scorebox .val{font-size:32px;font-weight:800;line-height:1;margin:7px 0 10px;letter-spacing:-.02em}
+.track{height:5px;border-radius:6px;background:var(--surface-3);overflow:hidden}
+.fill{height:100%;border-radius:6px}
+.panel{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:17px 19px;margin-bottom:18px}
+.panel h4{margin:0 0 13px;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600}
+.netgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.netgrid .nv{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700}
+.netgrid .nl{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-3);margin-top:2px}
+.flagrow{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-2)}
+.flagrow:first-of-type{padding-top:0}
+.flagrow:last-child{border-bottom:none;padding-bottom:0}
+.sev{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.sev.high{background:var(--red)}.sev.medium{background:var(--amber)}.sev.low{background:var(--blue)}
+.flagrow .k{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px}
+.flagrow .d{color:var(--ink-2);font-size:13px;line-height:1.5;margin-top:3px}
+.flagrow .st{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3);flex-shrink:0}
+.ev{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:13px}
+.ev:last-child{border-bottom:none}
+.ev .et{font-family:'JetBrains Mono',monospace;font-weight:600}
+.ev .ed{margin-left:auto;color:var(--ink-3);font-size:12px;font-family:'JetBrains Mono',monospace}
+.msg{font-size:13px;border-radius:10px;padding:10px 13px;margin-top:12px}
+.msg.err{background:var(--red-soft);color:#8d2e27}
+.msg.ok{background:var(--blue-soft);color:var(--blue-ink)}
+.clabel{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.kv{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink-2)}
+.kv b{color:var(--ink)}
+.keybox{background:var(--navy);color:#fff;border-radius:12px;padding:15px;margin-top:12px;word-break:break-all;font-family:'JetBrains Mono',monospace;font-size:13px}
+.warn{background:var(--red-soft);color:#8d2e27;border-radius:10px;padding:10px 13px;font-size:13px;margin-top:10px}
+.url{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue-ink);background:var(--blue-soft);border-radius:8px;padding:9px 11px;word-break:break-all;margin-top:8px}
+.pasteinp{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surface-2);margin-top:6px;outline:none}
+.pasteinp:focus{border-color:var(--blue);background:#fff}
+.authwrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(120% 120% at 50% 0,#fff 0,var(--cream) 60%)}
+.authcard{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:34px;width:100%;max-width:410px;box-shadow:0 40px 90px -45px rgba(11,8,40,.45)}
+.authcard .lg{display:flex;align-items:center;gap:9px;margin-bottom:22px}
+.authcard .lg img{height:25px}
+.authcard .lg b{font-size:17px;font-weight:800}
+.authcard h2{margin:0 0 4px;font-size:21px;letter-spacing:-.01em}
+.authcard p.s{color:var(--ink-2);font-size:13.5px;margin:0 0 22px}
+label{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin:13px 0 6px}
+input{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-size:14px;font-family:inherit;outline:none;background:var(--surface-2)}
+input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px var(--blue-soft)}
+.authcard .btn.pri{width:100%;margin-top:20px;padding:13px;font-size:14.5px;justify-content:center}
+.toggle{text-align:center;margin-top:18px;font-size:13px;color:var(--ink-2)}
+.toggle b{color:var(--blue-ink);cursor:pointer;font-weight:700}
+.center{display:grid;place-items:center;min-height:60vh;color:var(--ink-3)}
+.spin{width:24px;height:24px;border:3px solid var(--line);border-top-color:var(--blue);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media(max-width:780px){
+  .side{display:none}.stats{grid-template-columns:repeat(2,1fr)}
+  .bar{padding:22px 18px 0}.content{padding:18px}
+  th:nth-child(2),td:nth-child(2),th:nth-child(3),td:nth-child(3){display:none}
+}
+</style>
+</head>
+<body>
+<div id="app"><div class="center" style="min-height:100vh"><div class="spin"></div></div></div>
+<script>
+(function(){
+  "use strict";
+  var SB_URL = "https://xtrxjxputsydgegaoosf.supabase.co";
+  var SB_KEY = "sb_publishable_qjDknctIGYIzyyTQSFElhQ_9WYDgOVE";
+  var LOGO   = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231818F8' d='M9.2 17.6 3 11.4l2.1-2.1 4.1 4.1L18.9 4l2.1 2.1z'/%3E%3C/svg%3E";
+  var CONNECT = SB_URL + "/functions/v1/connect";
+  var app = document.getElementById("app");
+  var token = null;
+  try { token = localStorage.getItem("gb_token"); } catch(e){ token = null; }
+  var authMode = "signin";
+  var view = "candidates", lastAgency = null, lastRows = [], liveKey = null;
 
+  var SAMPLE = [
+    { external_ref:"S-1001", full_name:"Amara Okeke",  email:"amara.okeke@example.com", role:"Registered Nurse", location:"Manchester", events:["applied"],
+      cv_text:"Dynamic and results-driven registered nurse with a proven track record of leveraging synergies to deliver best-in-class patient outcomes across fast-paced, mission-critical environments. A passionate thought leader who consistently exceeds expectations by utilising cutting-edge methodologies and a holistic, patient-centric paradigm. Spearheaded numerous transformational initiatives, optimising workflows and driving operational excellence at scale. A collaborative team player and self-starter who thrives under pressure and remains committed to continuous improvement and lifelong learning." },
+    { external_ref:"S-1002", full_name:"Daniel Reyes", email:"daniel.reyes@example.com", role:"Support Worker", location:"Leeds", events:["applied","screened"],
+      cv_text:"Support worker with four years experience in supported living for adults with learning disabilities. Worked at Brookside Care from 2021 to 2024, then the Leeds City Council short breaks service from 2024 to present. NVQ Level 3 in Health and Social Care. Comfortable with personal care, medication administration and keyworker responsibilities. References available from both employers." },
+    { external_ref:"S-1003", full_name:"Priya Nair", email:"priya.nair@example.com", role:"Care Assistant", location:"Birmingham", events:["applied","no_show"],
+      cv_text:"Care assistant. Employed full time at Oakfield Residential Home, January 2020 to present. Also employed full time at Maple Grove Nursing Home, January 2020 to present. Day shifts at both sites. Manual handling and first aid certified. Enhanced DBS on file." }
+  ];
+
+  function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  function num(n){ n = Number(n); return isNaN(n) ? 0 : Math.round(n); }
+  function band(score, invert){
+    score = Number(score) || 0;
+    if(invert){ if(score>=50) return "r"; if(score>=20) return "a"; return "n"; }
+    if(score>=75) return "g"; if(score>=50) return "a"; return "r";
+  }
+  function cssvar(b){ return b==="g"?"green":b==="a"?"amber":b==="r"?"red":"ink-3"; }
+  function initials(name){ name=(name||"?").trim(); var p=name.split(/\s+/); return (((p[0]||"")[0]||"")+((p[1]||"")[0]||"")).toUpperCase(); }
+  function avatarColor(seed){ var c=["#1818F8","#0E9E6E","#B97A0A","#7A3FF2","#C8453C","#0B7BB5"]; var s=0; seed=seed||""; for(var i=0;i<seed.length;i++) s+=seed.charCodeAt(i); return c[s%c.length]; }
+  function headers(){ var h={ "apikey":SB_KEY, "Content-Type":"application/json" }; if(token) h["Authorization"]="Bearer "+token; return h; }
+  function setToken(t){ token=t; try{ localStorage.setItem("gb_token",t); }catch(e){} }
+  function clearToken(){ token=null; try{ localStorage.removeItem("gb_token"); }catch(e){} }
+
+  function signUp(email, pw, agency){
+    return fetch(SB_URL+"/auth/v1/signup", { method:"POST", headers:{ "apikey":SB_KEY, "Content-Type":"application/json" },
+      body: JSON.stringify({ email:email, password:pw, data:{ agency_name: agency || email.split("@")[0] } }) })
+      .then(function(r){ return r.json().then(function(j){ return { ok:r.ok, j:j }; }); })
+      .then(function(res){ if(!res.ok) throw new Error(res.j.error_description||res.j.msg||res.j.error||"Sign up failed");
+        if(res.j.access_token){ setToken(res.j.access_token); return "in"; } return "confirm"; });
+  }
+  function signIn(email, pw){
+    return fetch(SB_URL+"/auth/v1/token?grant_type=password", { method:"POST", headers:{ "apikey":SB_KEY, "Content-Type":"application/json" },
+      body: JSON.stringify({ email:email, password:pw }) })
+      .then(function(r){ return r.json().then(function(j){ return { ok:r.ok, j:j }; }); })
+      .then(function(res){ if(!res.ok) throw new Error(res.j.error_description||res.j.msg||res.j.error||"Sign in failed"); setToken(res.j.access_token); });
+  }
+
+  function getAgency(){
+    return fetch(SB_URL+"/rest/v1/agency?select=name,slug&limit=1", { headers: headers() })
+      .then(function(r){ if(r.status===401){ var e=new Error("unauthorised"); e.code=401; throw e; } return r.json(); })
+      .then(function(a){ return (a&&a[0])||null; });
+  }
+  function getCandidates(){
+    return fetch(SB_URL+"/rest/v1/candidate_overview?select=*&order=ghost_risk.desc", { headers: headers() })
+      .then(function(r){ if(r.status===401){ var e=new Error("unauthorised"); e.code=401; throw e; } return r.json(); });
+  }
+  function getDossier(id){
+    return fetch(SB_URL+"/functions/v1/candidate", { method:"POST", headers: headers(), body: JSON.stringify({ candidate_id:id }) })
+      .then(function(r){ return r.json(); });
+  }
+  function ingestEvent(ev){
+    return fetch(SB_URL+"/functions/v1/ingest", { method:"POST", headers: headers(), body: JSON.stringify(ev) })
+      .then(function(r){ return r.json(); });
+  }
+
+  var IC = {
+    users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+    plug:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0V8zM12 16v6"/></svg>',
+    spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg>',
+    out:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>'
+  };
+
+  function renderAuth(message){
+    var signup = authMode === "signup";
+    app.innerHTML =
+      '<div class="authwrap"><div class="authcard">' +
+        '<div class="lg"><img src="'+LOGO+'" alt=""/><b>GoodBuild</b></div>' +
+        '<h2>'+(signup?"Create your agency":"Sign in")+'</h2>' +
+        '<p class="s">'+(signup?"Your agency is created on sign up. You are its owner.":"Welcome back.")+'</p>' +
+        (signup?'<label>Agency name</label><input id="f_ag" placeholder="Northwind Care"/>':'') +
+        '<label>Email</label><input id="f_em" type="email" placeholder="you@agency.com"/>' +
+        '<label>Password</label><input id="f_pw" type="password" placeholder="At least 6 characters"/>' +
+        '<button class="btn pri" id="f_go">'+(signup?"Create agency":"Sign in")+'</button>' +
+        (message?'<div class="msg '+(message.t==="err"?"err":"ok")+'" style="margin-top:14px">'+esc(message.m)+'</div>':'') +
+        '<div class="toggle">'+(signup?'Already have an agency? <b id="f_t">Sign in</b>':'New here? <b id="f_t">Create your agency</b>')+'</div>' +
+      '</div></div>';
+    document.getElementById("f_t").onclick = function(){ authMode = signup?"signin":"signup"; renderAuth(null); };
+    document.getElementById("f_go").onclick = function(){
+      var btn=this, em=(document.getElementById("f_em")||{}).value||"", pw=(document.getElementById("f_pw")||{}).value||"", ag=(document.getElementById("f_ag")||{}).value||"";
+      if(!em||!pw){ renderAuth({t:"err",m:"Email and password are required."}); return; }
+      btn.disabled=true; btn.textContent="Working...";
+      (signup?signUp(em,pw,ag):signIn(em,pw)).then(function(state){
+        if(state==="confirm"){ authMode="signin"; renderAuth({t:"ok",m:"Account created. If email confirmation is on, confirm then sign in. Otherwise sign in now."}); }
+        else { view="candidates"; boot(); }
+      }).catch(function(e){ renderAuth({t:"err",m:e.message||String(e)}); });
+    };
+  }
+
+  function chip(value, invert){ var b=band(value,invert); return '<span class="chip '+b+'"><span class="dot"></span>'+num(value)+'</span>'; }
+
+  function sideHtml(agency){
+    return '<div class="side">' +
+        '<div class="brand"><img src="'+LOGO+'" alt=""/><b>GoodBuild</b></div>' +
+        '<div class="nav">' +
+          '<a class="'+(view==="candidates"?"on":"")+'" id="nav_cand">'+IC.users+'Candidates</a>' +
+          '<a class="'+(view==="connectors"?"on":"")+'" id="nav_conn">'+IC.plug+'Connectors</a>' +
+          '<a class="off">'+IC.spark+'Intelligence<span class="tag">SOON</span></a>' +
+        '</div>' +
+        '<div class="foot">' +
+          '<div class="agname">'+esc(agency?agency.name:"Your agency")+'</div>' +
+          '<div class="agsub">'+esc(agency?agency.slug:"")+'</div>' +
+          '<button class="out" id="d_out">'+IC.out+'Sign out</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function candidatesMain(rows){
+    var total=rows.length;
+    var flagged=rows.filter(function(r){return Number(r.open_flags)>0;}).length;
+    var avgRel=total?Math.round(rows.reduce(function(a,r){return a+Number(r.reliability||0);},0)/total):0;
+    var netHits=rows.filter(function(r){return Number(r.net_agencies)>1;}).length;
+
+    var bar='<div class="bar"><div class="titles"><div class="eyebrow">Candidates</div><h1>Scored against the network</h1></div>' +
+      '<div class="acts"><button class="btn" id="d_refresh">Refresh</button><button class="btn pri" id="d_seed">Add sample candidates</button></div></div>';
+
+    var stats='<div class="stats">' +
+      '<div class="stat"><div class="l">Candidates</div><div class="v">'+total+'</div></div>' +
+      '<div class="stat"><div class="l">Flagged</div><div class="v" style="color:'+(flagged?'var(--red)':'var(--ink)')+'">'+flagged+'</div></div>' +
+      '<div class="stat"><div class="l">Avg reliability</div><div class="v">'+avgRel+'<small>/100</small></div></div>' +
+      '<div class="stat"><div class="l">Network hits</div><div class="v" style="color:'+(netHits?'var(--blue-ink)':'var(--ink)')+'">'+netHits+'</div></div>' +
+      '</div>';
+
+    var body;
+    if(!rows||rows.length===0){
+      body='<div class="card"><div class="empty">'+
+        '<div class="ic">'+IC.users+'</div>'+
+        '<h3>No candidates yet</h3>'+
+        '<p>Add a few samples to see it work. One of them is already known to the network from another agency, so you will see a risk you could never spot on your own.</p>'+
+        '<button class="btn pri" id="d_seed2">Add sample candidates</button></div></div>';
+    } else {
+      var trs=rows.map(function(r){
+        var nm=r.full_name||r.external_ref, col=avatarColor(nm);
+        return '<tr data-id="'+esc(r.id)+'">'+
+          '<td><div class="cand"><div class="av" style="background:'+col+'22;color:'+col+'">'+esc(initials(nm))+'</div>'+
+            '<div><div class="nm">'+esc(nm)+'</div><div class="rf">'+esc(r.external_ref)+'</div></div></div></td>'+
+          '<td class="muted">'+esc(r.role||"–")+'</td>'+
+          '<td class="muted">'+esc(r.location||"–")+'</td>'+
+          '<td>'+chip(r.reliability,false)+'</td>'+
+          '<td>'+chip(r.ghost_risk,true)+'</td>'+
+          '<td>'+chip(r.flight_risk,true)+'</td>'+
+          '<td class="netcell"><b>'+num(r.net_agencies)+'</b> ag · <b>'+num(r.net_ghosts)+'</b> gh</td>'+
+          '<td>'+(Number(r.open_flags)>0?'<span class="flagdot">'+num(r.open_flags)+' open</span>':'<span class="clean">clean</span>')+'</td>'+
+        '</tr>';
+      }).join("");
+      body='<div class="card"><table><thead><tr>'+
+        '<th>Candidate</th><th>Role</th><th>Location</th><th>Reliability</th><th>Ghost</th><th>Flight</th><th>Network</th><th>Flags</th>'+
+        '</tr></thead><tbody>'+trs+'</tbody></table></div>';
+    }
+    return bar + '<div class="content">' + stats + body + '</div>';
+  }
+
+  function connectorsMain(){
+    var bar='<div class="bar"><div class="titles"><div class="eyebrow">Connectors</div><h1>Bring your CRM in</h1></div></div>';
+    var card='<div class="content"><div class="card" style="padding:24px;max-width:680px">'+
+      '<div class="clabel">Bullhorn</div>'+
+      '<div class="kv" id="c_status" style="margin-top:8px">Checking status...</div>'+
+      '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:18px">'+
+        '<button class="btn pri" id="c_gen">Generate connector key</button>'+
+        '<button class="btn" id="c_test" disabled>Send test Bullhorn event</button>'+
+      '</div>'+
+      '<div id="c_keyout"></div>'+
+      '<div style="margin-top:18px"><div class="clabel">Already have a key? Paste it to send a test</div>'+
+        '<input class="pasteinp" id="c_paste" placeholder="gbk_..."/></div>'+
+      '<div id="c_msg"></div>'+
+      '<div class="kv" style="margin-top:20px;color:var(--ink-3);line-height:1.6">Inbound is live. Point a Bullhorn webhook at the connect URL with header <span style="color:var(--blue-ink)">x-gb-connector-key</span> and candidates flow in scored. Outbound write-back to the CRM is the next brick.</div>'+
+    '</div></div>';
+    return bar + card;
+  }
+
+  function renderDash(agency, rows){
+    if(typeof agency !== "undefined") lastAgency = agency;
+    if(typeof rows !== "undefined") lastRows = rows;
+    agency = lastAgency; rows = lastRows || [];
+
+    var main = (view==="connectors") ? connectorsMain() : candidatesMain(rows);
+    app.innerHTML = '<div class="shell">'+sideHtml(agency)+'<div class="main">'+main+'</div></div>';
+
+    document.getElementById("nav_cand").onclick = function(){ view="candidates"; boot(); };
+    document.getElementById("nav_conn").onclick = function(){ view="connectors"; renderDash(); };
+    document.getElementById("d_out").onclick = function(){ clearToken(); authMode="signin"; renderAuth(null); };
+
+    if(view==="connectors"){ wireConnectors(); }
+    else {
+      var rf=document.getElementById("d_refresh"); if(rf) rf.onclick = boot;
+      var seeds=[document.getElementById("d_seed"), document.getElementById("d_seed2")];
+      seeds.forEach(function(b){ if(b) b.onclick=function(){ runSeed(seeds); }; });
+      Array.prototype.forEach.call(app.querySelectorAll("tbody tr"), function(tr){ tr.onclick=function(){ openModal(tr.getAttribute("data-id")); }; });
+    }
+  }
+
+  function wireConnectors(){
+    loadConnStatus();
+    document.getElementById("c_gen").onclick = function(){
+      var b=this; b.disabled=true; b.textContent="Generating...";
+      fetch(SB_URL+"/rest/v1/rpc/gb_provision_connector",{ method:"POST", headers:headers(), body:JSON.stringify({ p_crm:"bullhorn" }) })
+        .then(function(r){ return r.json(); }).then(function(key){
+          b.disabled=false; b.textContent="Regenerate key";
+          if(typeof key!=="string"){ cmsg("err","Could not generate key."); return; }
+          liveKey=key; document.getElementById("c_test").disabled=false;
+          document.getElementById("c_keyout").innerHTML=
+            '<div class="keybox">'+esc(key)+'</div>'+
+            '<div class="warn">Save this now. It will not be shown again. Lose it and you regenerate.</div>'+
+            '<div class="clabel" style="margin-top:14px">Connect URL</div><div class="url">'+esc(CONNECT)+'</div>';
+          loadConnStatus();
+        }).catch(function(e){ b.disabled=false; b.textContent="Generate connector key"; cmsg("err",e.message||"error"); });
+    };
+    document.getElementById("c_test").onclick = function(){ fireTest(); };
+    document.getElementById("c_paste").addEventListener("input", function(){
+      document.getElementById("c_test").disabled = !(liveKey || this.value.trim());
+    });
+  }
+  function loadConnStatus(){
+    var el=document.getElementById("c_status"); if(!el) return;
+    fetch(SB_URL+"/rest/v1/connector?select=crm,key_hint,status,last_event_at",{ headers:headers() })
+      .then(function(r){ return r.json(); }).then(function(rows){
+        var c=(rows||[]).filter(function(x){ return x.crm==="bullhorn"; })[0];
+        if(!c){ el.innerHTML="<b>Not set up.</b> Generate a key to begin."; return; }
+        el.innerHTML='<b>Active.</b> Key ending '+esc(c.key_hint)+'. Last event: '+(c.last_event_at?esc(new Date(c.last_event_at).toLocaleString()):"none yet")+'.';
+      }).catch(function(){ el.textContent="Could not load status."; });
+  }
+  function fireTest(){
+    var k=(liveKey||(document.getElementById("c_paste")||{}).value||"").trim();
+    if(!k){ cmsg("err","No key. Generate one or paste a saved key."); return; }
+    cmsg("","Sending test Bullhorn event...");
+    fetch(CONNECT,{ method:"POST", headers:{ "x-gb-connector-key":k, "Content-Type":"application/json" },
+      body:JSON.stringify({ crm:"bullhorn", event_type:"Client Submission", candidate:{ id:"BH-88002", firstName:"Lauren", lastName:"Walsh", email:"lauren.walsh@example.com", mobile:"07700900222", occupation:"Paediatric Nurse", address:{ city:"Bristol" } } }) })
+      .then(function(r){ return r.json(); }).then(function(res){
+        if(res.error){ cmsg("err",res.error); return; }
+        cmsg("ok","Lauren Walsh came in through the connector as a '"+esc(res.event)+"' event. Open Candidates to see her scored.");
+        loadConnStatus();
+      }).catch(function(e){ cmsg("err",e.message||"test failed"); });
+  }
+  function cmsg(kind,text){ var m=document.getElementById("c_msg"); if(!m) return; m.className=kind?("msg "+kind):"msg"; m.textContent=text; }
+
+  function runSeed(btns){
+    btns.forEach(function(b){ if(b){ b.disabled=true; b.textContent="Adding..."; } });
+    var chain=Promise.resolve();
+    SAMPLE.forEach(function(c){ c.events.forEach(function(ev){ chain=chain.then(function(){
+      return ingestEvent({ external_ref:c.external_ref, full_name:c.full_name, email:c.email, role:c.role, location:c.location, cv_text:c.cv_text, event_type:ev });
+    }); }); });
+    chain.then(boot).catch(function(e){ app.innerHTML='<div class="center">'+esc(e.message||"seed failed")+'</div>'; });
+  }
+
+  function openModal(id){
+    var scrim=document.createElement("div"); scrim.className="scrim";
+    scrim.innerHTML='<div class="modal"><div class="center" style="min-height:220px"><div class="spin"></div></div></div>';
+    scrim.onclick=function(){ document.body.removeChild(scrim); };
+    document.body.appendChild(scrim);
+
+    getDossier(id).then(function(d){
+      if(!d||d.error){ scrim.querySelector(".modal").innerHTML='<div class="mbody"><div class="msg err" style="margin:0">'+esc((d&&d.error)||"not found")+'</div></div>'; return; }
+      var s=d.score||{}, n=d.network||{};
+      var netGhost=Number(n.ghost_events||0), netReuse=Number(n.identity_reuse||0);
+      var nm=d.candidate.full_name||d.candidate.external_ref, col=avatarColor(nm);
+
+      var alert=(netGhost>0||netReuse>0)?
+        '<div class="alert"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'+
+        '<span><b>The network knows this person.</b>'+(netGhost>0?' Ghosted '+netGhost+' time'+(netGhost>1?'s':'')+' at another agency.':'')+(netReuse>0?' Seen at '+netReuse+' other agenc'+(netReuse>1?'ies':'y')+'.':'')+' A signal you would never see on your own.</span></div>':'';
+
+      function sbox(label, value, invert){
+        var b=band(value,invert), v=cssvar(b);
+        return '<div class="scorebox"><div class="lbl">'+label+'</div><div class="val" style="color:var(--'+v+')">'+(value!=null?num(value):"–")+'</div>'+
+          '<div class="track"><div class="fill" style="width:'+num(value)+'%;background:var(--'+v+')"></div></div></div>';
+      }
+
+      var flagsHtml="";
+      if(d.flags&&d.flags.length){
+        flagsHtml='<div class="panel"><h4>Integrity flags</h4>'+d.flags.map(function(f){
+          var sev=["high","medium","low"].indexOf(f.severity)>=0?f.severity:"medium";
+          return '<div class="flagrow"><div class="sev '+sev+'"></div><div style="min-width:0"><div class="k">'+esc(f.kind)+'</div><div class="d">'+esc(f.detail||"")+'</div></div><div class="st">'+esc(f.status)+'</div></div>';
+        }).join("")+'</div>';
+      }
+      var eventsHtml=(!d.events||!d.events.length)?'<div class="muted">No events yet.</div>':
+        d.events.map(function(e){ return '<div class="ev"><span class="et">'+esc(e.event_type)+'</span><span class="ed">'+esc(new Date(e.occurred_at).toLocaleDateString())+'</span></div>'; }).join("");
+
+      scrim.querySelector(".modal").innerHTML=
+        '<div class="mhead"><div class="av" style="background:'+col+'22;color:'+col+'">'+esc(initials(nm))+'</div>'+
+          '<div class="who"><div class="nm">'+esc(nm)+'</div><div class="sb">'+esc([d.candidate.role,d.candidate.location].filter(Boolean).join(" · "))+'</div></div>'+
+          '<button class="btn" id="m_audit" style="margin-left:auto">Run integrity audit</button>'+
+          '<button class="x" id="m_x">&times;</button></div>'+
+        '<div class="mbody"><div id="m_status"></div>'+alert+
+          '<div class="scores">'+sbox("Reliability",s.reliability,false)+sbox("Ghost risk",s.ghost_risk,true)+sbox("Flight risk",s.flight_risk,true)+'</div>'+
+          '<div class="panel"><h4>Network signal</h4><div class="netgrid">'+
+            '<div><div class="nv">'+num(n.agencies_seen||1)+'</div><div class="nl">agencies</div></div>'+
+            '<div><div class="nv">'+num(n.ghost_events||0)+'</div><div class="nl">ghosts</div></div>'+
+            '<div><div class="nv">'+num(n.no_show_events||0)+'</div><div class="nl">no-shows</div></div>'+
+            '<div><div class="nv">'+num(n.identity_reuse||0)+'</div><div class="nl">reuse</div></div>'+
+          '</div></div>'+flagsHtml+
+          '<div class="panel" style="margin-bottom:0"><h4>Recent activity</h4>'+eventsHtml+'</div>'+
+        '</div>';
+
+      document.getElementById("m_x").onclick=function(){ document.body.removeChild(scrim); };
+      document.getElementById("m_audit").onclick=function(){
+        var ab=this, st=document.getElementById("m_status");
+        ab.disabled=true; ab.textContent="Auditing...";
+        st.innerHTML='<div class="msg ok">Reading the CV with the model…</div>';
+        fetch(SB_URL+"/functions/v1/audit",{ method:"POST", headers:headers(), body:JSON.stringify({ candidate_id:id }) })
+          .then(function(r){ return r.json(); })
+          .then(function(res){
+            if(res.error){ ab.disabled=false; ab.textContent="Run integrity audit"; st.innerHTML='<div class="msg err">'+esc(res.error)+'</div>'; return; }
+            document.body.removeChild(scrim); boot().then(function(){ openModal(id); });
+          })
+          .catch(function(e){ ab.disabled=false; ab.textContent="Run integrity audit"; st.innerHTML='<div class="msg err">'+esc(e.message||"audit failed")+'</div>'; });
+      };
+    }).catch(function(e){
+      scrim.querySelector(".modal").innerHTML='<div class="mbody"><div class="msg err" style="margin:0">'+esc(e.message||"error")+'</div></div>';
+    });
+  }
+
+  function boot(){
+    if(!token){ renderAuth(null); return Promise.resolve(); }
+    app.innerHTML='<div class="center" style="min-height:100vh"><div class="spin"></div></div>';
+    return Promise.all([ getAgency(), getCandidates() ]).then(function(out){ view = (view==="connectors")?"connectors":"candidates"; renderDash(out[0], out[1]||[]); })
+      .catch(function(e){
+        if(e&&e.code===401){ clearToken(); authMode="signin"; renderAuth({t:"err",m:"Session expired, please sign in again."}); }
+        else { app.innerHTML='<div class="center" style="min-height:60vh">'+esc(e.message||"Something went wrong")+'</div>'; }
+      });
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>
